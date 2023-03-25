@@ -17,7 +17,11 @@ class SplashActivity : AppCompatActivity() {
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                     finish()
                 }
-            }, 3000
+            }, TIME_DELAY
         )
+    }
+
+    companion object {
+        private val TIME_DELAY = 3000L
     }
 }

@@ -18,11 +18,6 @@ class MainViewModel : ViewModel() {
     private val _usernameLiveData = MutableLiveData<String>()
     val username : LiveData<String> = _usernameLiveData
 
-    companion object {
-        private val TAG = this::class.java.simpleName
-        private const val DEFAULT_QUERY = "jay"
-    }
-
     init {
         getUsers(null)
     }
@@ -59,5 +54,10 @@ class MainViewModel : ViewModel() {
                 }
             }
         )
+    }
+
+    companion object {
+        private val TAG = this::class.java.simpleName
+        private const val DEFAULT_QUERY = "jay"
     }
 }

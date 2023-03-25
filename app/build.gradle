@@ -14,7 +14,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "KEY", '"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"'
+        buildConfigField "String", "BASE_URL_GITHUB_API", '"https://api.github.com/"'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

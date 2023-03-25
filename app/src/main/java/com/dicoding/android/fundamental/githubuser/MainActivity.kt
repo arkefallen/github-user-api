@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         mainBinding.rvUsers.layoutManager = layoutManager
 
-        supportActionBar?.title = "GitHub User"
+        supportActionBar?.title = resources.getString(R.string.app_name)
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = mainBinding.svUsers
