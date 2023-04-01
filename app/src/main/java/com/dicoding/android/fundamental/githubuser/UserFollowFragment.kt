@@ -77,7 +77,6 @@ class UserFollowFragment : Fragment() {
     }
 
     private fun setUserFollow(users: List<User>) {
-
         val adapter = UserAdapter(users)
         binding.rvFollow.adapter = adapter
         binding.rvFollow.setHasFixedSize(true)

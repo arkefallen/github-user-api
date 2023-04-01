@@ -3,6 +3,7 @@ package com.dicoding.android.fundamental.githubuser
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.android.fundamental.githubuser.databinding.ItemUserBinding

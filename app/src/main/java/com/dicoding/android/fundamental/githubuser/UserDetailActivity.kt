@@ -14,17 +14,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 class UserDetailActivity : AppCompatActivity() {
     private lateinit var detailBinding: ActivityUserDetailBinding
     private val userDetailViewModel by viewModels<UserDetailViewModel>()
-
-    companion object {
-        val EXTRA_USERNAME = "extra_user"
-
-        @StringRes
-        private val TAB_TITLES = intArrayOf(
-            R.string.tab_followers,
-            R.string.tab_following
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         detailBinding = ActivityUserDetailBinding.inflate(layoutInflater)
@@ -34,12 +23,13 @@ class UserDetailActivity : AppCompatActivity() {
 
         val username = intent.getStringExtra(EXTRA_USERNAME)
 
-        detailBinding.tvName.visibility = View.GONE
-        detailBinding.tvUsernameDetail.visibility = View.GONE
-        detailBinding.ivAvatar.visibility = View.GONE
-        detailBinding.tvFollowing.visibility = View.GONE
-        detailBinding.tvFollowers.visibility = View.GONE
-
+        detailBinding.apply {
+            this.tvName.visibility = View.GONE
+            this.tvUsernameDetail.visibility = View.GONE
+            this.tvFollowers.visibility = View.GONE
+            this.tvFollowing.visibility = View.GONE
+            this.ivAvatar.visibility = View.GONE
+        }
 
         userDetailViewModel.getUser(username)
 
@@ -111,4 +101,15 @@ class UserDetailActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         detailBinding.pbDetailuser.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+
+    companion object {
+        val EXTRA_USERNAME = "extra_user"
+
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.tab_followers,
+            R.string.tab_following
+        )
+    }
+
 }
