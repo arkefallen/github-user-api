@@ -29,6 +29,8 @@ class UserDetailActivity : AppCompatActivity() {
             this.tvFollowers.visibility = View.GONE
             this.tvFollowing.visibility = View.GONE
             this.ivAvatar.visibility = View.GONE
+            this.favoriteButton.visibility = View.GONE
+            this.shareButton.visibility = View.GONE
         }
 
         userDetailViewModel.getUser(username)
@@ -49,8 +51,12 @@ class UserDetailActivity : AppCompatActivity() {
                 if (it == null) {
                     detailBinding.tvUsernameDetail.visibility = View.GONE
                 } else {
-                    detailBinding.tvUsernameDetail.visibility = View.VISIBLE
-                    detailBinding.tvUsernameDetail.text = it.toString()
+                    detailBinding.apply {
+                        this.tvUsernameDetail.visibility = View.VISIBLE
+                        this.favoriteButton.visibility = View.VISIBLE
+                        this.shareButton.visibility = View.VISIBLE
+                        this.tvUsernameDetail.text = it.toString()
+                    }
                 }
             }
         )
