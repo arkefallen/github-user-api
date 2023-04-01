@@ -52,8 +52,10 @@ class UserFollowFragment : Fragment() {
             viewModel.userFollowers.observe(viewLifecycleOwner) {
                 if (it.size == 0 ) {
                     binding.status.text = "No followers"
+                    binding.avLottie.visibility = View.VISIBLE
                     binding.status.visibility = View.VISIBLE
                 } else {
+                    binding.avLottie.visibility = View.GONE
                     binding.status.visibility = View.GONE
                     setUserFollow(it)
                 }
@@ -63,8 +65,10 @@ class UserFollowFragment : Fragment() {
             viewModel.userFollowing.observe(viewLifecycleOwner) {
                 if (it.size == 0) {
                     binding.status.text = "No following"
+                    binding.avLottie.visibility = View.VISIBLE
                     binding.status.visibility = View.VISIBLE
                 } else {
+                    binding.avLottie.visibility = View.GONE
                     binding.status.visibility = View.GONE
                     setUserFollow(it)
                 }

@@ -14,7 +14,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "KEY", '"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"'
+        buildConfigField "String", "KEY", '"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"'
         buildConfigField "String", "BASE_URL_GITHUB_API", '"https://api.github.com/"'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-
+    implementation "com.airbnb.android:lottie:6.0.0"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
