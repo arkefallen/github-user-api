@@ -12,7 +12,5 @@ data class FavoriteUserEntity(
     @ColumnInfo(name = "avatar_url")
     var avatarUrl: String? = null,
 
-    @ColumnInfo(name = "favorited")
-    var isFavorite: Boolean
 )
 

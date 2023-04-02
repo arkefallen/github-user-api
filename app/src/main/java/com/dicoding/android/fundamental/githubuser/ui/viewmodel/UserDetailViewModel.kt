@@ -4,16 +4,20 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.dicoding.android.fundamental.githubuser.data.entity.FavoriteUserEntity
 import com.dicoding.android.fundamental.githubuser.data.remote.APIConfig
 import com.dicoding.android.fundamental.githubuser.data.response.User
 import com.dicoding.android.fundamental.githubuser.data.response.UserDetailResponse
 import com.dicoding.android.fundamental.githubuser.repo.UserRepository
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class UserDetailViewModel(private val userRepository: UserRepository) : ViewModel() {
 
+    fun getIsFavorite() = userRepository.isUserFavorite
     fun getLoading() = userRepository.isLoading
     fun getFullname() = userRepository.userFullname
     fun getUsername() = userRepository.username
@@ -31,6 +35,29 @@ class UserDetailViewModel(private val userRepository: UserRepository) : ViewMode
     }
     fun setUserFollowingByUsername(username: String) {
         userRepository.getFollowing(username)
+    }
+    fun insertFavoriteUser(username: String, avatarUrl: String) {
+        val favUser = FavoriteUserEntity(
+            username,
+            avatarUrl,
+        )
+        viewModelScope.launch {
+            userRepository.insertFavoriteUser(favUser)
+        }
+    }
+
+    fun deleteFavoriteUser(username: String) {
+        viewModelScope.launch {
+            userRepository.deleteFavoriteUser(username)
+        }
+    }
+
+    fun setIsFavorite(isFavorite: Boolean) {
+        userRepository.setIsFavorite(isFavorite)
+    }
+
+    fun getFavUserByUname(username: String) : LiveData<FavoriteUserEntity> {
+        return userRepository.getFavoriteUserByUsername(username)
     }
 
     companion object {

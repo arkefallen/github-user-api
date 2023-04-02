@@ -1,5 +1,6 @@
 package com.dicoding.android.fundamental.githubuser.ui
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -30,7 +31,9 @@ class UserDetailActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        val username = intent.getStringExtra(EXTRA_USERNAME)
+        val username = intent.getStringExtra(EXTRA_USERNAME) as String
+        val isFavorite = intent.getBooleanExtra(EXTRA_FAVORITE, false)
+        val profileImage = intent.getStringExtra(EXTRA_IMAGE) as String
 
         detailBinding.apply {
             this.tvName.visibility = View.GONE
@@ -43,6 +46,8 @@ class UserDetailActivity : AppCompatActivity() {
         }
 
         userDetailViewModel.setUserDetail(username)
+        userDetailViewModel.setIsFavorite(isFavorite)
+
 
         userDetailViewModel.getFullname().observe(
             this, {
@@ -102,7 +107,7 @@ class UserDetailActivity : AppCompatActivity() {
         )
 
         val userSectionPagerAdapter = UserSectionPagerAdapter(this)
-        userSectionPagerAdapter.username = username.toString()
+        userSectionPagerAdapter.username = username
         val viewPager2 : ViewPager2 = detailBinding.viewPager
         viewPager2.adapter = userSectionPagerAdapter
 
@@ -112,7 +117,61 @@ class UserDetailActivity : AppCompatActivity() {
             tab, position -> tab.text = resources.getString(TAB_TITLES[position])
         }.attach()
 
+        val shareButton = detailBinding.shareButton
+        val favoriteButton = detailBinding.favoriteButton
+
+        userDetailViewModel.getFavUserByUname(username).observe(
+            this, {
+                if (it != null) {
+                    detailBinding.favoriteButton.apply {
+                        this.text = "FAVORITED"
+                        this.setTextColor(resources.getColorStateList(R.color.green))
+                        this.background = resources.getDrawable(R.drawable.bg_favorite_outlined_rounded_button)
+                        this.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_check_24, 0, 0, 0)
+                    }
+                    favoriteButton.setOnClickListener {
+                        userDetailViewModel.deleteFavoriteUser(username)
+                    }
+                } else {
+                    detailBinding.favoriteButton.apply {
+                        this.text = "ADD TO FAVORITE"
+                        this.setTextColor(resources.getColorStateList(R.color.white))
+                        this.background = resources.getDrawable(R.drawable.bg_favorite_solid_rounded_button)
+                        this.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_favorite_24, 0, 0, 0)
+                    }
+                    favoriteButton.setOnClickListener {
+                        userDetailViewModel.insertFavoriteUser(username, profileImage)
+                    }
+                }
+            }
+        )
+
     }
+
+//    @SuppressLint("ResourceAsColor")
+//    private fun showFavorite(isFavorite: Boolean) {
+//        if (isFavorite) {
+//            detailBinding.favoriteButton.text = "FAVORITED"
+//            detailBinding.favoriteButton.setTextColor(resources.getColorStateList(R.color.green))
+//            detailBinding.favoriteButton.background = resources.getDrawable(R.drawable.bg_favorite_outlined_rounded_button)
+//            detailBinding.favoriteButton.setCompoundDrawablesWithIntrinsicBounds(
+//                R.drawable.baseline_check_24,
+//                0,
+//                0,
+//                0
+//            )
+//        } else {
+//            detailBinding.favoriteButton.text = "ADD TO FAVORITE"
+//            detailBinding.favoriteButton.setTextColor(R.color.white)
+//            detailBinding.favoriteButton.background = resources.getDrawable(R.drawable.bg_favorite_solid_rounded_button)
+//            detailBinding.favoriteButton.setCompoundDrawablesWithIntrinsicBounds(
+//                R.drawable.baseline_favorite_24,
+//                0,
+//                0,
+//                0
+//            )
+//        }
+//    }
 
     private fun showLoading(isLoading: Boolean) {
         detailBinding.pbDetailuser.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -120,6 +179,8 @@ class UserDetailActivity : AppCompatActivity() {
 
     companion object {
         val EXTRA_USERNAME = "extra_user"
+        val EXTRA_FAVORITE = "extra_favorite"
+        val EXTRA_IMAGE = "extra_image"
 
         @StringRes
         private val TAB_TITLES = intArrayOf(
@@ -129,3 +190,5 @@ class UserDetailActivity : AppCompatActivity() {
     }
 
 }
+
+

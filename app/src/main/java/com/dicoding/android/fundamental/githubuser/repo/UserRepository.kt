@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dicoding.android.fundamental.githubuser.data.entity.FavoriteUserDAO
+import com.dicoding.android.fundamental.githubuser.data.entity.FavoriteUserEntity
 import com.dicoding.android.fundamental.githubuser.data.entity.GithubUserDatabase
 import com.dicoding.android.fundamental.githubuser.data.remote.APIConfig
 import com.dicoding.android.fundamental.githubuser.data.remote.APIService
@@ -21,6 +22,9 @@ class UserRepository private constructor(
     private val database: GithubUserDatabase,
     private val favoriteUserDAO: FavoriteUserDAO
 ) {
+    private val _isFavoriteLiveData = MutableLiveData<Boolean>()
+    val isUserFavorite : LiveData<Boolean> = _isFavoriteLiveData
+
     private val _userFollowersLiveData = MutableLiveData<List<User>>()
     val userFollowers : LiveData<List<User>> = _userFollowersLiveData
 
@@ -47,6 +51,18 @@ class UserRepository private constructor(
 
     private val _usersLiveData = MutableLiveData<List<User>>()
     val users : LiveData<List<User>> = _usersLiveData
+
+    suspend fun insertFavoriteUser(user: FavoriteUserEntity) {
+        favoriteUserDAO.insertUser(user)
+    }
+
+    suspend fun deleteFavoriteUser(username: String) {
+        favoriteUserDAO.deleteUser(username)
+    }
+
+    fun setIsFavorite(boolean: Boolean) {
+        _isFavoriteLiveData.postValue(boolean)
+    }
 
     fun setUsers(username: String?) {
         _isLoadingLiveData.value = true
@@ -193,6 +209,10 @@ class UserRepository private constructor(
                 }
             }
         )
+    }
+
+    fun getFavoriteUserByUsername(username: String) : LiveData<FavoriteUserEntity>{
+        return favoriteUserDAO.getUserByUsername(username)
     }
 
     companion object {
