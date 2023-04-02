@@ -1,4 +1,4 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

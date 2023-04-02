@@ -1,4 +1,4 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,15 +7,24 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.dicoding.android.fundamental.githubuser.R
 import com.dicoding.android.fundamental.githubuser.databinding.ActivityUserDetailBinding
+import com.dicoding.android.fundamental.githubuser.ui.adapter.UserSectionPagerAdapter
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.MainViewModel
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.UserDetailViewModel
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class UserDetailActivity : AppCompatActivity() {
     private lateinit var detailBinding: ActivityUserDetailBinding
-    private val userDetailViewModel by viewModels<UserDetailViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val factory : ViewModelFactory = ViewModelFactory.getInstance(this)
+        val userDetailViewModel : UserDetailViewModel by viewModels { factory }
+
         detailBinding = ActivityUserDetailBinding.inflate(layoutInflater)
         setContentView(detailBinding.root)
 
@@ -33,9 +42,9 @@ class UserDetailActivity : AppCompatActivity() {
             this.shareButton.visibility = View.GONE
         }
 
-        userDetailViewModel.getUser(username)
+        userDetailViewModel.setUserDetail(username)
 
-        userDetailViewModel.userFullname.observe(
+        userDetailViewModel.getFullname().observe(
             this, {
                 if (it == null) {
                     detailBinding.tvName.visibility = View.GONE
@@ -46,7 +55,8 @@ class UserDetailActivity : AppCompatActivity() {
             }
         )
 
-        userDetailViewModel.username.observe(
+
+        userDetailViewModel.getUsername().observe(
             this, {
                 if (it == null) {
                     detailBinding.tvUsernameDetail.visibility = View.GONE
@@ -61,7 +71,7 @@ class UserDetailActivity : AppCompatActivity() {
             }
         )
 
-        userDetailViewModel.profileImage.observe(
+        userDetailViewModel.getProfileURL().observe(
             this, {
                 detailBinding.ivAvatar.visibility = View.VISIBLE
                 Glide.with(this@UserDetailActivity)
@@ -71,21 +81,21 @@ class UserDetailActivity : AppCompatActivity() {
             }
         )
 
-        userDetailViewModel.totalFollowers.observe(
+        userDetailViewModel.getTotalFollowers().observe(
             this, {
                 detailBinding.tvFollowers.visibility = View.VISIBLE
                 detailBinding.tvFollowers.text = "${it} Followers"
             }
         )
 
-        userDetailViewModel.totalFollowing.observe(
+        userDetailViewModel.getTotalFollowing().observe(
             this, {
                 detailBinding.tvFollowing.visibility = View.VISIBLE
                 detailBinding.tvFollowing.text = "${it} Following"
             }
         )
 
-        userDetailViewModel.isLoading.observe(
+        userDetailViewModel.getLoading().observe(
             this, {
                 showLoading(it)
             }

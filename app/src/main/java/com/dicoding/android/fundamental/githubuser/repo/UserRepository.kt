@@ -1,19 +1,26 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.repo
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.dicoding.android.fundamental.githubuser.data.entity.FavoriteUserDAO
+import com.dicoding.android.fundamental.githubuser.data.entity.GithubUserDatabase
+import com.dicoding.android.fundamental.githubuser.data.remote.APIConfig
+import com.dicoding.android.fundamental.githubuser.data.remote.APIService
+import com.dicoding.android.fundamental.githubuser.data.response.GithubResponse
+import com.dicoding.android.fundamental.githubuser.data.response.User
+import com.dicoding.android.fundamental.githubuser.data.response.UserDetailResponse
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.MainViewModel
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.UserDetailViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UserDetailViewModel : ViewModel() {
-
-    companion object {
-        private val TAG = this::class.java.simpleName
-    }
-
+class UserRepository private constructor(
+    private val apiService: APIService,
+    private val database: GithubUserDatabase,
+    private val favoriteUserDAO: FavoriteUserDAO
+) {
     private val _userFollowersLiveData = MutableLiveData<List<User>>()
     val userFollowers : LiveData<List<User>> = _userFollowersLiveData
 
@@ -38,11 +45,44 @@ class UserDetailViewModel : ViewModel() {
     private val _usernameLiveData = MutableLiveData<String>()
     val username: LiveData<String> = _usernameLiveData
 
-    init {
-        getUser(null)
+    private val _usersLiveData = MutableLiveData<List<User>>()
+    val users : LiveData<List<User>> = _usersLiveData
+
+    fun setUsers(username: String?) {
+        _isLoadingLiveData.value = true
+
+        val client = if (username == null) {
+            APIConfig.getService().getGithubUsers("jay")
+        } else {
+            APIConfig.getService().getGithubUsers(username)
+        }
+
+        client.enqueue(
+            object : Callback<GithubResponse> {
+                override fun onResponse(
+                    call: Call<GithubResponse>,
+                    response: Response<GithubResponse>
+                ) {
+                    _isLoadingLiveData.value = false
+
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            _usersLiveData.value = responseBody.items!!
+                        }
+                    } else {
+                        Log.e(MainViewModel.TAG, "onResponse: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
+                    Log.e(MainViewModel.TAG, "onFailure: ${t.message}")
+                }
+            }
+        )
     }
 
-    fun getUser(username: String?) {
+    fun findDetailUser(username: String?) {
 
         _isLoadingLiveData.value = true
 
@@ -70,20 +110,19 @@ class UserDetailViewModel : ViewModel() {
                             _totalFollowingLiveData.value = responseBody.following
                         }
                         else {
-                            Log.e(TAG, "onResponse: ${response.message()}")
+                            Log.e(UserDetailViewModel.TAG, "onResponse: ${response.message()}")
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<UserDetailResponse>, t: Throwable) {
-                    Log.e(TAG, "onFailure: ${t.message}")
+                    Log.e(UserDetailViewModel.TAG, "onFailure: ${t.message}")
                 }
             }
         )
-
     }
 
-    fun getFollowers(username: String?) {
+    fun getFollowers(username: String) {
 
         _isLoadingLiveData.value = true
 
@@ -104,23 +143,23 @@ class UserDetailViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         if (responseBody != null) {
-                           _userFollowersLiveData.value = responseBody
+                            _userFollowersLiveData.value = responseBody!!
                         }
                         else {
-                            Log.e(TAG, "onResponse: ${response.message()}")
+                            Log.e(UserDetailViewModel.TAG, "onResponse: ${response.message()}")
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                    Log.e(TAG, "onFailure: ${t.message}")
+                    Log.e(UserDetailViewModel.TAG, "onFailure: ${t.message}")
                 }
             }
         )
 
     }
 
-    fun getFollowing(username: String?) {
+    fun getFollowing(username: String) {
 
         _isLoadingLiveData.value = true
 
@@ -141,20 +180,33 @@ class UserDetailViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         if (responseBody != null) {
-                            _userFollowingLiveData.value = responseBody
+                            _userFollowingLiveData.value = responseBody!!
                         }
                         else {
-                            Log.e(TAG, "onResponse: ${response.message()}")
+                            Log.e(UserDetailViewModel.TAG, "onResponse: ${response.message()}")
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                    Log.e(TAG, "onFailure: ${t.message}")
+                    Log.e(UserDetailViewModel.TAG, "onFailure: ${t.message}")
                 }
             }
         )
+    }
 
+    companion object {
+        @Volatile
+        private var instance: UserRepository? = null
+
+        fun getInstance(
+            apiService: APIService,
+            database: GithubUserDatabase,
+            favoriteUserDAO: FavoriteUserDAO
+        ) : UserRepository =
+            instance ?: synchronized(this) {
+                instance ?: UserRepository(apiService, database, favoriteUserDAO)
+            }.also { instance = it }
     }
 
 }

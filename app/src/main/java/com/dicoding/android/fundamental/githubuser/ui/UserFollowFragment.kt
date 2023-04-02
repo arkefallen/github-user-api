@@ -1,4 +1,4 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.android.fundamental.githubuser.data.response.User
 import com.dicoding.android.fundamental.githubuser.databinding.FragmentUserBinding
+import com.dicoding.android.fundamental.githubuser.ui.adapter.UserAdapter
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.UserDetailViewModel
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.ViewModelFactory
 
 class UserFollowFragment : Fragment() {
     private lateinit var binding: FragmentUserBinding
-    private lateinit var viewModel: UserDetailViewModel
 
     companion object {
         val ARG_POSITION = "position"
@@ -34,9 +38,9 @@ class UserFollowFragment : Fragment() {
         var position = 0
         var username = ""
 
-        viewModel = ViewModelProvider(requireActivity()).get(UserDetailViewModel::class.java)
+        val viewModel: UserDetailViewModel = ViewModelProvider(requireActivity()).get()
 
-        viewModel.isLoading.observe(viewLifecycleOwner) {
+        viewModel.getLoading().observe(viewLifecycleOwner) {
             showLoading(it)
         }
 
@@ -48,29 +52,31 @@ class UserFollowFragment : Fragment() {
         }
 
         if (position == 1) {
-            viewModel.getFollowers(username)
-            viewModel.userFollowers.observe(viewLifecycleOwner) {
-                if (it.size == 0 ) {
-                    binding.status.text = "No followers"
-                    binding.avLottie.visibility = View.VISIBLE
-                    binding.status.visibility = View.VISIBLE
-                } else {
+            viewModel.setUserFollowersByUsername(username)
+            viewModel.getUserFollowers().observe(viewLifecycleOwner) {
+                if (it != null) {
                     binding.avLottie.visibility = View.GONE
                     binding.status.visibility = View.GONE
                     setUserFollow(it)
                 }
-            }
-        } else {
-            viewModel.getFollowing(username)
-            viewModel.userFollowing.observe(viewLifecycleOwner) {
-                if (it.size == 0) {
-                    binding.status.text = "No following"
+                if (it.isEmpty()) {
+                    binding.status.text = "No followers"
                     binding.avLottie.visibility = View.VISIBLE
                     binding.status.visibility = View.VISIBLE
-                } else {
+                }
+            }
+        } else {
+            viewModel.setUserFollowingByUsername(username)
+            viewModel.getUserFollowing().observe(viewLifecycleOwner) {
+                if (it != null) {
                     binding.avLottie.visibility = View.GONE
                     binding.status.visibility = View.GONE
                     setUserFollow(it)
+                }
+                if (it.isEmpty()) {
+                    binding.status.text = "No following"
+                    binding.avLottie.visibility = View.VISIBLE
+                    binding.status.visibility = View.VISIBLE
                 }
             }
         }

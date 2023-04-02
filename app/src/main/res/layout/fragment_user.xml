@@ -8,7 +8,7 @@
     android:paddingTop="16dp"
     android:background="@color/white"
     android:paddingEnd="12dp"
-    tools:context=".UserFollowFragment">
+    tools:context=".ui.UserFollowFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_follow"

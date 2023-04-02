@@ -1,4 +1,4 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.data.remote
 
 
 import okhttp3.Interceptor

@@ -1,9 +1,10 @@
-package com.dicoding.android.fundamental.githubuser
+package com.dicoding.android.fundamental.githubuser.ui.adapter
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.dicoding.android.fundamental.githubuser.ui.UserFollowFragment
 
 class UserSectionPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
     var username: String = ""
