@@ -2,8 +2,12 @@ package com.dicoding.android.fundamental.githubuser.ui
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.viewModels
@@ -84,6 +88,25 @@ class MainActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         mainBinding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
      }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater : MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.favorite_users -> {
+                val favIntent = Intent(this@MainActivity, FavoriteUserActivity::class.java )
+                startActivity(favIntent)
+                return true
+            }
+            else -> {
+                return true
+            }
+        }
+    }
 
     private fun setUser(users: List<User>) {
         val adapter = UserAdapter(users)

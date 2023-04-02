@@ -32,7 +32,6 @@ class UserDetailActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val username = intent.getStringExtra(EXTRA_USERNAME) as String
-        val isFavorite = intent.getBooleanExtra(EXTRA_FAVORITE, false)
         val profileImage = intent.getStringExtra(EXTRA_IMAGE) as String
 
         detailBinding.apply {
@@ -46,8 +45,6 @@ class UserDetailActivity : AppCompatActivity() {
         }
 
         userDetailViewModel.setUserDetail(username)
-        userDetailViewModel.setIsFavorite(isFavorite)
-
 
         userDetailViewModel.getFullname().observe(
             this, {

@@ -25,6 +25,4 @@ data class User(
 	@field:SerializedName("avatar_url")
 	val avatarUrl: String,
 
-	val isFavorite: Boolean = false,
-
 ) : Parcelable

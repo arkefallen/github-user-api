@@ -22,6 +22,4 @@ data class UserDetailResponse(
 	@field:SerializedName("name")
 	val name: String,
 
-	val isFavorite: Boolean = false,
-
 ) : Parcelable
