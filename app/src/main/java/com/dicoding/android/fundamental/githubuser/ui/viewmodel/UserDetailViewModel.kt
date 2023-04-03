@@ -17,7 +17,6 @@ import retrofit2.Response
 
 class UserDetailViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    fun getIsFavorite() = userRepository.isUserFavorite
     fun getLoading() = userRepository.isLoading
     fun getFullname() = userRepository.userFullname
     fun getUsername() = userRepository.username
@@ -36,10 +35,11 @@ class UserDetailViewModel(private val userRepository: UserRepository) : ViewMode
     fun setUserFollowingByUsername(username: String) {
         userRepository.getFollowing(username)
     }
-    fun insertFavoriteUser(username: String, avatarUrl: String) {
+    fun insertFavoriteUser(username: String, avatarUrl: String, profileUrl: String) {
         val favUser = FavoriteUserEntity(
             username,
             avatarUrl,
+            profileUrl
         )
         viewModelScope.launch {
             userRepository.insertFavoriteUser(favUser)
@@ -50,10 +50,6 @@ class UserDetailViewModel(private val userRepository: UserRepository) : ViewMode
         viewModelScope.launch {
             userRepository.deleteFavoriteUser(username)
         }
-    }
-
-    fun setIsFavorite(isFavorite: Boolean) {
-        userRepository.setIsFavorite(isFavorite)
     }
 
     fun getFavUserByUname(username: String) : LiveData<FavoriteUserEntity> {

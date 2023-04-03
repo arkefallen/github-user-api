@@ -19,11 +19,8 @@ import retrofit2.Response
 
 class UserRepository private constructor(
     private val apiService: APIService,
-    private val database: GithubUserDatabase,
-    private val favoriteUserDAO: FavoriteUserDAO
+    private var favoriteUserDAO: FavoriteUserDAO
 ) {
-    private val _isFavoriteLiveData = MutableLiveData<Boolean>()
-    val isUserFavorite : LiveData<Boolean> = _isFavoriteLiveData
 
     private val _userFollowersLiveData = MutableLiveData<List<User>>()
     val userFollowers : LiveData<List<User>> = _userFollowersLiveData
@@ -60,17 +57,13 @@ class UserRepository private constructor(
         favoriteUserDAO.deleteUser(username)
     }
 
-    fun setIsFavorite(boolean: Boolean) {
-        _isFavoriteLiveData.postValue(boolean)
-    }
-
     fun setUsers(username: String?) {
         _isLoadingLiveData.value = true
 
         val client = if (username == null) {
-            APIConfig.getService().getGithubUsers("jay")
+            apiService.getGithubUsers("jay")
         } else {
-            APIConfig.getService().getGithubUsers(username)
+            apiService.getGithubUsers(username)
         }
 
         client.enqueue(
@@ -103,9 +96,9 @@ class UserRepository private constructor(
         _isLoadingLiveData.value = true
 
         val client = if (username == null) {
-            APIConfig.getService().getUserDetail("admin")
+            apiService.getUserDetail("admin")
         } else {
-            APIConfig.getService().getUserDetail(username)
+            apiService.getUserDetail(username)
         }
 
         client.enqueue(
@@ -143,9 +136,9 @@ class UserRepository private constructor(
         _isLoadingLiveData.value = true
 
         val client = if (username == null) {
-            APIConfig.getService().getFollowers("admin")
+            apiService.getFollowers("admin")
         } else {
-            APIConfig.getService().getFollowers(username.toString())
+            apiService.getFollowers(username)
         }
 
         client.enqueue(
@@ -180,9 +173,9 @@ class UserRepository private constructor(
         _isLoadingLiveData.value = true
 
         val client = if (username == null) {
-            APIConfig.getService().getFollowing("admin")
+            apiService.getFollowing("admin")
         } else {
-            APIConfig.getService().getFollowing(username.toString())
+            apiService.getFollowing(username)
         }
 
         client.enqueue(
@@ -215,17 +208,20 @@ class UserRepository private constructor(
         return favoriteUserDAO.getUserByUsername(username)
     }
 
+    fun getFavoriteUsers() : LiveData<List<FavoriteUserEntity>> {
+        return favoriteUserDAO.getUser()
+    }
+
     companion object {
         @Volatile
         private var instance: UserRepository? = null
 
         fun getInstance(
             apiService: APIService,
-            database: GithubUserDatabase,
             favoriteUserDAO: FavoriteUserDAO
         ) : UserRepository =
             instance ?: synchronized(this) {
-                instance ?: UserRepository(apiService, database, favoriteUserDAO)
+                instance ?: UserRepository(apiService, favoriteUserDAO)
             }.also { instance = it }
     }
 

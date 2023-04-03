@@ -8,6 +8,7 @@
     android:layout_margin="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_rv_user"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp">
@@ -26,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="TextView"
-            android:textColor="@color/dark_smoke"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/iv_user_image"

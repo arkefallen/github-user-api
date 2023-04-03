@@ -6,8 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="12dp"
     android:paddingTop="16dp"
-    android:background="@color/white"
     android:paddingEnd="12dp"
+    android:id="@+id/fragment_tab_layout"
     tools:context=".ui.UserFollowFragment">
 
     <androidx.recyclerview.widget.RecyclerView

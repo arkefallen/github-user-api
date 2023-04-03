@@ -11,19 +11,26 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.cardview.widget.CardView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.android.fundamental.githubuser.R
+import com.dicoding.android.fundamental.githubuser.data.ThemePreferences
 import com.dicoding.android.fundamental.githubuser.data.response.User
 import com.dicoding.android.fundamental.githubuser.databinding.ActivityMainBinding
+import com.dicoding.android.fundamental.githubuser.databinding.ActivityThemeBinding
+import com.dicoding.android.fundamental.githubuser.databinding.ActivityUserDetailBinding
+import com.dicoding.android.fundamental.githubuser.databinding.FragmentUserBinding
 import com.dicoding.android.fundamental.githubuser.databinding.ItemUserBinding
 import com.dicoding.android.fundamental.githubuser.ui.adapter.UserAdapter
 import com.dicoding.android.fundamental.githubuser.ui.viewmodel.MainViewModel
+import com.dicoding.android.fundamental.githubuser.ui.viewmodel.ThemeViewModel
 import com.dicoding.android.fundamental.githubuser.ui.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
-    private lateinit var itemBinding: ItemUserBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +39,23 @@ class MainActivity : AppCompatActivity() {
         val mainViewModel : MainViewModel by viewModels { factory }
 
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
-        itemBinding = ItemUserBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
+
+        val preferences = ThemePreferences.getInstance(dataStore)
+        val themeViewModel = ViewModelProvider(this).get(ThemeViewModel::class.java)
+        themeViewModel.setPreferences(preferences)
+
+        themeViewModel.getThemeSetting()?.observe(
+            this, {
+                if (it) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+        )
+
+
 
         val layoutManager = LinearLayoutManager(this)
         mainBinding.rvUsers.layoutManager = layoutManager
@@ -103,6 +125,8 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             else -> {
+                val themeIntent = Intent(this@MainActivity, ThemeActivity::class.java)
+                startActivity(themeIntent)
                 return true
             }
         }

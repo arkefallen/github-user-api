@@ -10,6 +10,6 @@ object Injection {
         val apiService = APIConfig.getService()
         val database = GithubUserDatabase.getInstance(context)
         val favoriteUserDAO = database.favoriteUserDAO()
-        return UserRepository.getInstance(apiService, database, favoriteUserDAO)
+        return UserRepository.getInstance(apiService, favoriteUserDAO)
     }
 }

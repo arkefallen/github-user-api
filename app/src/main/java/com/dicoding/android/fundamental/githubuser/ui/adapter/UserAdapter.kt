@@ -21,6 +21,7 @@ class UserAdapter(private val listUser : List<User>) : RecyclerView.Adapter<User
     override fun onBindViewHolder(holder: ListUserViewHolder, position: Int) {
         val username = listUser[position].login
         val imageURL = listUser[position].avatarUrl
+        val profileURL = listUser[position].profileUrl
         holder.binding.tvUsername.text = username
         Glide.with(holder.itemView.context)
             .load(imageURL)
@@ -30,6 +31,7 @@ class UserAdapter(private val listUser : List<User>) : RecyclerView.Adapter<User
             val detailIntent = Intent(holder.itemView.context, UserDetailActivity::class.java).apply {
                 putExtra(UserDetailActivity.EXTRA_USERNAME, username)
                 putExtra(UserDetailActivity.EXTRA_IMAGE, imageURL)
+                putExtra(UserDetailActivity.EXTRA_PROFILE_URL, profileURL)
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
             holder.itemView.context.startActivity(detailIntent)
